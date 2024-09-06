@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Spotify Playlist Downloader</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Spotify Playlist Downloader</h1>
+
+      <!-- Playlist Selection -->
+      <select id="playlist-select">
+        <option value="">Select a playlist</option>
+      </select>
+
+      <!-- Download Playlist -->
+      <form id="download-form">
+        <button type="submit">Download Playlist</button>
+      </form>
+
+      <!-- Track Tabs -->
+      <div class="tab-container">
+        <ul class="tab-list" id="tab-list"></ul>
+      </div>
+
+      <!-- Tab Content -->
+      <div id="tab-content" class="tab-content"></div>
+
+      <!-- Download Selected Tracks -->
+      <button id="download-track">Download Track</button>
+
+      <h2>Downloaded Songs</h2>
+      <ul id="download-list">
+        <!-- Downloaded tracks will be dynamically added here -->
+      </ul>
+      <div id="message"></div>
+
+      <!-- Loading Buffer -->
+      <div id="loading-buffer" class="loading hidden">
+        <span>Loading...</span>
+      </div>
+
+      <!-- Modal -->
+      <div id="status-modal" class="modal hidden">
+        <div class="modal-content">
+          <span class="close-btn">&times;</span>
+          <p id="modal-message"></p>
+        </div>
+      </div>
+    </div>
+    <script src="script.js"></script>
+  </body>
+</html>
