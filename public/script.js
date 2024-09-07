@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  // DOM elements references
   const playlistSelect = document.getElementById("playlist-select");
   const tabList = document.getElementById("tab-list");
   const tabContent = document.getElementById("tab-content");
@@ -10,45 +11,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   const modalMessage = document.getElementById("modal-message");
   const closeBtn = document.querySelector(".close-btn");
 
-  // Function to show modal with a message
+  // Modal functions
   function showModal(message) {
     modalMessage.innerText = message;
     statusModal.classList.remove("hidden");
     statusModal.style.display = "block";
   }
 
-  // Function to hide modal
   function hideModal() {
     statusModal.style.display = "none";
   }
 
-  // Close modal when clicking on the close button
+  // Close modal when clicking on the close button or outside modal
   closeBtn.addEventListener("click", hideModal);
-
-  // Close modal when clicking outside of the modal content
   window.addEventListener("click", (event) => {
-    if (event.target === statusModal) {
-      hideModal();
-    }
+    if (event.target === statusModal) hideModal();
   });
 
-  // Hide tab content initially
-  tabContent.classList.add("hidden");
-
-  // Function to show loading buffer
+  // Show and hide loading buffer
   function showLoadingBuffer() {
     loadingBuffer.classList.remove("hidden");
   }
 
-  // Function to hide loading buffer
   function hideLoadingBuffer() {
     loadingBuffer.classList.add("hidden");
   }
 
-  // Load playlists
+  // Load playlists on page load
   showLoadingBuffer();
-  const response = await fetch("/list-playlists");
-  const playlists = await response.json();
+  const playlistsResponse = await fetch("/list-playlists");
+  const playlists = await playlistsResponse.json();
   playlists.forEach((playlist) => {
     const option = document.createElement("option");
     option.value = playlist.id;
@@ -69,13 +61,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     showLoadingBuffer();
     const response = await fetch(`/list-tracks/${playlistId}`);
     const tracks = await response.json();
-    displayTracksInTabs(tracks, 50); // Change 50 to the desired number of tracks per tab
+    displayTracksInTabs(tracks, 50); // Customize tracks per tab here
     hideLoadingBuffer();
     tabContent.classList.remove("hidden");
     tabList.classList.remove("hidden");
   });
 
-  // Function to display tracks in tabs
+  // Display tracks in tabs, dividing them into pages
   function displayTracksInTabs(tracks, tracksPerTab) {
     tabList.innerHTML = "";
     tabContent.innerHTML = "";
@@ -84,9 +76,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     for (let i = 0; i < totalTabs; i++) {
       const tab = document.createElement("li");
       tab.innerText = `${i + 1}`;
-      tab.addEventListener("click", () => {
-        setActiveTab(i);
-      });
+      tab.addEventListener("click", () => setActiveTab(i));
       tabList.appendChild(tab);
 
       const tabSection = document.createElement("div");
@@ -103,9 +93,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         listItem.dataset.trackId = track.id;
         listItem.dataset.trackName = track.name;
         listItem.dataset.artistName = track.artist;
-        listItem.addEventListener("click", () => {
-          selectTrack(listItem);
-        });
+        listItem.addEventListener("click", () => selectTrack(listItem));
         trackList.appendChild(listItem);
       });
 
@@ -113,9 +101,11 @@ document.addEventListener("DOMContentLoaded", async () => {
       tabContent.appendChild(tabSection);
     }
 
+    // Set the first tab as active by default
     setActiveTab(0);
   }
 
+  // Switch active tab
   function setActiveTab(index) {
     const tabs = document.querySelectorAll(".tab-list li");
     const tabSections = document.querySelectorAll(".tab-section");
@@ -131,36 +121,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
+  // Select and deselect tracks
   function selectTrack(trackElement) {
-    // Deselect previously selected track
     const previouslySelected = document.querySelector(".tab-section .selected");
     if (previouslySelected && previouslySelected !== trackElement) {
       previouslySelected.classList.remove("selected");
     }
-
-    // Toggle selection of the current track
     trackElement.classList.toggle("selected");
   }
 
-  async function updateDownloadedSongs() {
-    const response = await fetch("/list-downloads");
-    const files = await response.json();
-    downloadList.innerHTML = "";
-
-    files.forEach((file) => {
-      const listItem = document.createElement("li");
-      listItem.innerHTML = `<a href="/downloads/${file}" target="_blank">${file}</a>`;
-      downloadList.appendChild(listItem);
-    });
-  }
-
-  // Load downloaded songs on page load
-  updateDownloadedSongs();
-
+  // Download selected track
   downloadSelectedTracksButton.addEventListener("click", async () => {
     const selectedTrack = document.querySelector(".tab-section .selected");
     if (!selectedTrack) {
-      alert("No track selected");
+      alert("Please select a track.");
       return;
     }
 
@@ -179,29 +153,28 @@ document.addEventListener("DOMContentLoaded", async () => {
       });
 
       if (response.ok) {
-        console.log(`Started download for: ${track.trackName}`);
         showModal("Track downloaded successfully!");
         await updateDownloadedSongs();
       } else {
-        console.error(`Error downloading ${track.trackName}`);
-        showModal("Download failed. Please try again.");
+        showModal("Track download failed. Please try again.");
       }
     } catch (error) {
-      console.error(`Error downloading ${track.trackName}`, error);
-      showModal("An error occurred. Please try again.");
+      showModal(
+        "An error occurred while downloading the track. Please try again."
+      );
     } finally {
       hideLoadingBuffer();
     }
   });
 
-  // Handle playlist download
+  // Download entire playlist
   document
     .getElementById("download-form")
     .addEventListener("submit", async (e) => {
       e.preventDefault();
       const playlistId = playlistSelect.value;
       if (!playlistId) {
-        alert("No playlist selected");
+        alert("Please select a playlist.");
         return;
       }
 
@@ -218,14 +191,30 @@ document.addEventListener("DOMContentLoaded", async () => {
           showModal("Playlist downloaded successfully!");
           await updateDownloadedSongs();
         } else {
-          console.error("Error downloading playlist");
-          showModal("Download failed. Please try again.");
+          showModal("Playlist download failed. Please try again.");
         }
       } catch (error) {
-        console.error("Error downloading playlist", error);
-        showModal("An error occurred. Please try again.");
+        showModal(
+          "An error occurred while downloading the playlist. Please try again."
+        );
       } finally {
         hideLoadingBuffer();
       }
     });
+
+  // Update downloaded songs list
+  async function updateDownloadedSongs() {
+    const response = await fetch("/list-downloads");
+    const files = await response.json();
+    downloadList.innerHTML = "";
+
+    files.forEach((file) => {
+      const listItem = document.createElement("li");
+      listItem.innerHTML = `<a href="/downloads/${file}" target="_blank">${file}</a>`;
+      downloadList.appendChild(listItem);
+    });
+  }
+
+  // Load downloaded songs on page load
+  updateDownloadedSongs();
 });

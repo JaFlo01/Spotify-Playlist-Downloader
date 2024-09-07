@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spotify Playlist Downloader</title>
+    <link rel="icon" href="assets/logo.png" type="image/png" />
     <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
@@ -15,7 +16,7 @@
         <option value="">Select a playlist</option>
       </select>
 
-      <!-- Download Playlist -->
+      <!-- Download Playlist Button -->
       <form id="download-form">
         <button type="submit">Download Playlist</button>
       </form>
@@ -28,13 +29,14 @@
       <!-- Tab Content -->
       <div id="tab-content" class="tab-content"></div>
 
-      <!-- Download Selected Tracks -->
+      <!-- Download Selected Track Button -->
       <button id="download-track">Download Track</button>
 
+      <!-- Downloaded Songs List -->
       <h2>Downloaded Songs</h2>
-      <ul id="download-list">
-        <!-- Downloaded tracks will be dynamically added here -->
-      </ul>
+      <ul id="download-list"></ul>
+
+      <!-- Message Display -->
       <div id="message"></div>
 
       <!-- Loading Buffer -->
@@ -42,7 +44,7 @@
         <span>Loading...</span>
       </div>
 
-      <!-- Modal -->
+      <!-- Status Modal -->
       <div id="status-modal" class="modal hidden">
         <div class="modal-content">
           <span class="close-btn">&times;</span>
@@ -50,6 +52,8 @@
         </div>
       </div>
     </div>
+
+    <!-- Main Script -->
     <script src="script.js"></script>
   </body>
 </html>
