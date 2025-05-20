@@ -1,5 +1,7 @@
 # Spotify Playlist Downloader
 
+⚠️ **Disclaimer:** This application is for educational purposes only. It uses Spotify’s API to fetch metadata about user playlists and tracks. Audio files are played and optionally downloaded using browser functionality and are stored only on the user's device. This project does not store, stream, or redistribute audio files from any server. It is not affiliated with or endorsed by Spotify.
+
 ## Overview
 
 This application enables users to download individual songs or entire playlists from their Spotify account. The process involves logging in to your Spotify account to handle authorization and then using a web interface to select and download the desired tracks.
